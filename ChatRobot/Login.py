@@ -5,6 +5,8 @@ import re
 import os
 import Data
 import Tools
+import xml.dom.minidom
+import json
 
 class Login:
     def __init__(self):
@@ -20,6 +22,22 @@ class Login:
                 print '[ERROR] Login failed. failed code=%s' % (result,)
                 Data.login_status = 'loginout'
                 return
+
+            if self.get_login_callback_info():
+                print '[INFO] WeChat login succeed .'
+            else:
+                print '[ERROR] WeChat login failed .'
+                self.status = 'loginout'
+                return
+
+            if self.login_init():
+                print '[INFO] WeChat init succeed .'
+            else:
+                print '[INFO] WeChat init failed'
+                self.status = 'loginout'
+                return
+            
+            self.status_notify()
         else:
             print '[ERROR] Can\'t get uuid please retry...'
 
@@ -90,3 +108,65 @@ class Login:
                 retry_time -= 1
                 time.sleep(try_later_secs)
         return code
+    
+    def get_login_callback_info(self):
+        '''callback login infomation'''
+        if len(Data.redirect_uri) < 4:
+            print '[ERROR] Login url error please try again'
+            return False
+
+        result = Data.session.get(Data.redirect_uri)
+        result.encoding = 'utf-8'
+        data = result.text
+        doc = xml.dom.minidom.parseString(data)
+        root = doc.documentElement
+        
+        for node in root.childNodes:
+            if node.nodeName == 'skey':
+                Data.skey = node.childNodes[0].data
+            if node.nodeName == 'wxsid':
+                Data.sid = node.childNodes[0].data
+            if node.nodeName == 'wxuin':
+                Data.uin = node.childNodes[0].data
+            if node.nodeName == 'pass_ticket':
+                Data.pass_ticket = node.childNodes[0].data
+        if '' in (Data.skey, Data.sid, Data.uin, Data.pass_ticket):
+            return False
+
+        Data.base_request={
+            'Uin':Data.uin,
+            'Sid':Data.sid,
+            'Skey':Data.skey,
+            'DeviceID':Data.device_id,
+        }
+        return True
+
+    def login_init(self):
+        url = Data.url_base + '/webwxinit?r=%i&lang=en_US&pass_ticket=%s' % (int(time.time()), Data.pass_ticket)
+        params = {'BaseRequest':Data.base_request}
+
+        result = Data.session.post(url, data = json.dumps(params))
+        result.encoding = Data.encoding
+        dic = json.loads(result.text)
+        Data.my_account = dic['User']
+        Data.sync_key = dic['SyncKey']
+        Data.sync_key_str = '|'.join([str(keyVal['Key']) + "_" + str(keyVal['Val']) for keyVal in Data.sync_key['List']])
+
+        return dic['BaseResponse']['Ret'] == 0
+
+
+    def status_notify(self):
+        url = Data.url_base + '/webwxstatusnotify?lang=zh_CN&pass_ticket=%s' % Data.pass_ticket
+        Data.base_request['Uin'] = int(Data.base_request['Uin'])
+        params = {
+            'BaseRequest': Data.base_request,
+            "Code": 3,
+            "FromUserName": Data.my_account['UserName'],
+            "ToUserName": Data.my_account['UserName'],
+            "ClientMsgId": int(time.time())
+        }
+
+        result = Data.session.post(url, data=json.dumps(params))
+        result.encoding = Data.encoding
+        dic = json.loads(result.text)
+        return dic['BaseResponse']['Ret'] == 0

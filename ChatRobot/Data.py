@@ -5,6 +5,7 @@ Used to store all the data
 '''
 import requests
 import os
+import random
 
 # code
 SUCCESS = '200'
@@ -25,6 +26,17 @@ LOG_DIR = os.path.join(DATA_DIR,'Log')
 
 # Login and request data
 uuid = ''
+login_status = ''
+skey = None
+sid = None
+uin = None
+pass_ticket = None
+base_request = None
+device_id = 'e' + repr(random.random())[2:17]
+
+my_account = None
+sync_key = None
+sync_key_str = None
 
 #network request uir and host 
 session = session = requests.Session()
