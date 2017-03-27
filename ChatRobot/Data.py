@@ -30,5 +30,8 @@ uuid = ''
 session = session = requests.Session()
 url_get_uuid = 'https://login.weixin.qq.com/jslogin'
 url_get_qrcode = 'https://login.weixin.qq.com/qrcode/'
+url_login = 'https://login.weixin.qq.com/cgi-bin/mmwebwx-bin/login?tip=%s&uuid=%s&_=%s'
 url_base = '' # https://wx.qq.com/cgi-bin/mmwebwx-bin
+host_base = ''
+redirect_uri = ''
 
