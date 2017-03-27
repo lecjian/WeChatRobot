@@ -4,6 +4,7 @@ Data module
 Used to store all the data
 '''
 import requests
+import os
 
 # code
 SUCCESS = '200'
@@ -13,10 +14,21 @@ TIMEOUT = '408'
 # encoding
 encoding = 'utf-8'
 
-#network request uir and host 
-session = session = requests.Session()
-get_uuid_url = 'https://login.weixin.qq.com/jslogin'
-base_url = '' # https://wx.qq.com/cgi-bin/mmwebwx-bin
+# path
+PROJ_DIR =os.path.join(os.getcwd(),'ChatRobot') 
+DATA_DIR = os.path.join(PROJ_DIR,'Data')
+TEMP_DIR = os.path.join(PROJ_DIR,'Temp')
+IMG_DIR = os.path.join(DATA_DIR,'Image')
+VID_DIR = os.path.join(DATA_DIR,'Video')
+LOG_DIR = os.path.join(DATA_DIR,'Log')
+
 
 # Login and request data
-uuid = None
+uuid = ''
+
+#network request uir and host 
+session = session = requests.Session()
+url_get_uuid = 'https://login.weixin.qq.com/jslogin'
+url_get_qrcode = 'https://login.weixin.qq.com/qrcode/'
+url_base = '' # https://wx.qq.com/cgi-bin/mmwebwx-bin
+

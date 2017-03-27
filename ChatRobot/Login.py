@@ -2,7 +2,9 @@
 import time
 import random
 import re
+import os
 import Data
+import Tools
 
 class Login:
     def __init__(self):
@@ -10,6 +12,7 @@ class Login:
 
     def main(self):
         if self.get_uuid():
+            self.get_qrcode()
             print '[INFO] Please use WeChat to scan the QR code .'
         else:
             print '[ERROR] Can\'t get uuid please retry...'
@@ -21,7 +24,7 @@ class Login:
             'lang': 'zh_CN',
             '_': int(time.time()) * 1000 + random.randint(1, 999),
         }
-        result = Data.session.get(Data.get_uuid_url, params = params)
+        result = Data.session.get(Data.url_get_uuid, params = params)
         result.encoding = Data.encoding
         regx = r'window.QRLogin.code = (\d+); window.QRLogin.uuid = "(\S+?)"'
         data = re.search(regx, result.text)
@@ -30,3 +33,9 @@ class Login:
             Data.uuid = data.group(2)
             return code == Data.SUCCESS
         return False
+
+    def get_qrcode(self):
+        img_dir = os.path.join(Data.DATA_DIR, 'WXQR.jpg')
+        result = Data.session.get(Data.url_get_qrcode + Data.uuid, stream=True)
+        Tools.write_file(result.content, img_dir, 'wb')
+        os.startfile(img_dir) # open image
