@@ -12,6 +12,8 @@ SUCCESS = '200'
 SCANED = '201'
 TIMEOUT = '408'
 
+DEBUG = True
+
 # encoding
 encoding = 'utf-8'
 

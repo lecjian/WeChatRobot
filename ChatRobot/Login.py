@@ -152,6 +152,14 @@ class Login:
         Data.sync_key = dic['SyncKey']
         Data.sync_key_str = '|'.join([str(keyVal['Key']) + "_" + str(keyVal['Val']) for keyVal in Data.sync_key['List']])
 
+        if Data.DEBUG:
+            path = os.path.join(Data.TEMP_DIR, 'sync_key.json')
+            Tools.write_file(json.dumps(Data.sync_key), path, 'w')
+            path = os.path.join(Data.TEMP_DIR, 'sync_key_str.json')
+            Tools.write_file(json.dumps(Data.sync_key_str), path, 'w')
+            path = os.path.join(Data.TEMP_DIR, 'my_account.json')
+            Tools.write_file(json.dumps(Data.my_account), path, 'w')
+
         return dic['BaseResponse']['Ret'] == 0
 
 
