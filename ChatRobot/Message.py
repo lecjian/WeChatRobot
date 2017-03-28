@@ -7,17 +7,19 @@ import Data
 import Tools
 
 class Message:
-    def __init__(self):
+    def __init__(self, contactsClass):
+        self.contacts = contactsClass
         self.sync_msg()
-
+        
     def sync_msg(self):
         while True:
             try:
                 code, selector = self.sync_check()
                 if code == '0':
-                    if selector == '2':
-                        self.get_msg()
-                    print '[INFO] Have new message'
+                    msg = self.get_msg()
+                    if msg is not None:
+                        self.analyze_msg(msg)
+                    # print '[INFO] Have new message'
                 elif code == '10101':
                     print '[INFO] Loginout on other client'
                 time.sleep(10)
@@ -66,4 +68,71 @@ class Message:
             return dic
         except:
             return None
+
+    def analyze_msg(self, dic):
+        '''
+        51 login init contact user name
+        1  message
+           location
+                content: XXXXXX:<br/>/cgi-bin/mmwebwx-bin/webwxgetpubliclinkimg?url=xxx&msgid=XXXX97264734&pictype=location
+        3  image
+        34 voice msg
+        42 recommend
+        43 video msg
+        47 user define emoji pic url in keyword 'cdnurl'
+        49 share
+        53 video call
+        '''
+        for msg in dic['AddMsgList']:
+            msg_type = msg['MsgType']
+
+            if msg_type == 1:
+                msg_content = msg['Content']
+                user_name = msg['FromUserName']
+                name = self.contacts.get_name(user_name)
+                if msg_content.find('=location') != -1:
+                    index = msg_content.find(':')
+                    msg_content = msg_content[:index]
+                print '%s : %s'%(name, msg_content)
+
+            elif msg_type == 3:
+                print 'receive image'
+
+            elif msg_type == 34:
+                print 'receive voice msg'
+
+            elif msg_type == 42:
+                self.show_recommend(msg)
+
+            elif msg_type == 43:
+                print 'video msg'
+
+            elif msg_type == 47:
+                print 'emoji pic'
+
+            elif msg_type == 49:
+                self.show_share(msg)
+
+            elif msg_type == 53:
+                print 'video call'
+
+    def show_recommend(self, msg):
+        info = msg['RecommendInfo']
+        print '[RecommendInfo]:'
+        print '-NickName: %s' % info['NickName']
+        print '-Alias: %s' % info['Alias']
+        print '-Local: %s %s' % (info['Province'], info['City'])
+        print '-Gender: %s' % ['unknown', 'male', 'female'][info['Sex']]
+
+    def show_share(self, msg):
+        print '[Share]:'
+        print '-title: %s' % msg['FileName']
+        print '-desc: '
+        print '-link: %s' % msg['Url']
+        print '-content: %s' % (msg.get('content')[:20] if msg.get('content') else "unknown")
+
+
+
+
+
     

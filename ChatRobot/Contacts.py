@@ -64,11 +64,11 @@ class Contacts:
         return None
 
     def get_name(self, user_name):
-        if self.is_friend:
+        if self.is_friend(user_name):
             return self.get_contact_name(user_name, Data.friend_list)
-        elif self.is_group:
+        elif self.is_group(user_name):
             return self.get_contact_name(user_name, Data.group_list)
-        elif self.is_pubilc:
+        elif self.is_pubilc(user_name):
             return self.get_contact_name(user_name, Data.public_list)
         return 'unknow'
 
