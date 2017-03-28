@@ -40,6 +40,10 @@ my_account = None
 sync_key = None
 sync_key_str = None
 
+friend_list = None 
+group_list = None
+public_list = None
+
 #network request uir and host 
 session = session = requests.Session()
 url_get_uuid = 'https://login.weixin.qq.com/jslogin'
