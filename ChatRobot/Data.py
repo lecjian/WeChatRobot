@@ -40,9 +40,9 @@ my_account = None
 sync_key = None
 sync_key_str = None
 
-friend_list = None 
-group_list = None
-public_list = None
+friend_list = [] 
+group_list = []
+public_list = []
 
 #network request uir and host 
 session = session = requests.Session()
