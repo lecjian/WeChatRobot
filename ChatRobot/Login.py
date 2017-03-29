@@ -61,7 +61,7 @@ class Login:
     def get_qrcode(self):
         img_dir = os.path.join(Data.DATA_DIR, 'WXQR.jpg')
         result = Data.session.get(Data.url_get_qrcode + Data.uuid, stream=True)
-        Tools.write_file(result.content, img_dir, 'wb')
+        Tools.write_file(result.content, Data.DATA_DIR, 'WXQR.jpg', 'wb')
         os.startfile(img_dir) # open image
 
     def do_request(self, url):
@@ -153,12 +153,9 @@ class Login:
         Data.sync_key_str = '|'.join([str(keyVal['Key']) + "_" + str(keyVal['Val']) for keyVal in Data.sync_key['List']])
 
         if Data.DEBUG:
-            path = os.path.join(Data.TEMP_DIR, 'sync_key.json')
-            Tools.write_file(json.dumps(Data.sync_key), path, 'w')
-            path = os.path.join(Data.TEMP_DIR, 'sync_key_str.json')
-            Tools.write_file(json.dumps(Data.sync_key_str), path, 'w')
-            path = os.path.join(Data.TEMP_DIR, 'my_account.json')
-            Tools.write_file(json.dumps(Data.my_account), path, 'w')
+            Tools.write_file(json.dumps(Data.sync_key), Data.TEMP_DIR, 'sync_key.json', 'w')
+            Tools.write_file(json.dumps(Data.sync_key_str), Data.TEMP_DIR, 'sync_key_str.json', 'w')
+            Tools.write_file(json.dumps(Data.my_account), Data.TEMP_DIR, 'my_account.json', 'w')
 
         return dic['BaseResponse']['Ret'] == 0
 

@@ -18,13 +18,12 @@ class Contacts:
                 % (Data.pass_ticket, Data.skey, int(time.time()))
         try:
             result = Data.session.post(url, data='{}')
-        except Exception as e:
+        except:
             print '[ERROR] Get contacts fail'
             return False
         result.encoding = Data.encoding
         if Data.DEBUG:
-            path = os.path.join(Data.TEMP_DIR, 'contacts.json')
-            Tools.write_file(result.text.encode('utf-8'), path, 'w')
+            Tools.write_file(result.text.encode('utf-8'), Data.TEMP_DIR, 'contacts.json', 'w')
 
         self.init_contacts_data(result.text)
 
@@ -57,8 +56,8 @@ class Contacts:
                 return True
         return False
 
-    def get_contact_name(self, user_name, list):
-        for contact in Data.friend_list:
+    def get_contact_name(self, user_name, lists):
+        for contact in lists:
             if user_name == contact['UserName']:
                 return contact['RemarkName'] if contact['RemarkName'] else contact['NickName']
         return None
@@ -93,7 +92,7 @@ class Contacts:
             'BaseRequest': Data.base_request,
             'CmdId': 2,
             'RemarkName': remarkname,
-            'UserName': uid
+            'UserName': user_id
         }
         try:
             result = Data.session.post(url, data = json.dumps(params), timeout = 60)

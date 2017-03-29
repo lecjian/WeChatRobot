@@ -18,7 +18,8 @@ if __name__ == '__main__':
     login = Login()
     contacts = Contacts()
     group = Group()
-    get_data()
+    if Data.DEBUG:
+        get_data()
     message = Message(contacts)
 
 

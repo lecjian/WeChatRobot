@@ -4,8 +4,10 @@ import os
 import Data
 
 
-def write_file(stream_data, file_dir, mode):
-    with open(file_dir, mode) as f:
+def write_file(stream_data, file_path, file_name, mode):
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+    with open(os.path.join(file_path, file_name), mode) as f:
         f.write(stream_data)
 
 def get_user_head_icon(user_id, group_id = None):
@@ -17,7 +19,7 @@ def get_user_head_icon(user_id, group_id = None):
     result = Data.session.get(url)
 
     file_name = 'icon_' + user_id + '.jpg'
-    write_file(result.content, os.path.join(Data.USER_ICON_DIR, file_name), 'wb')
+    write_file(result.content, Data.USER_ICON_DIR, file_name, 'wb')
     return file_name
 
 def get_group_head_icon(group_id):
@@ -25,7 +27,7 @@ def get_group_head_icon(group_id):
     result = Data.session.get(url)
 
     file_name = 'icon_' + group_id + '.jpg'
-    write_file(result.content, os.path.join(Data.GROUP_ICON_DIR, file_name), 'wb')
+    write_file(result.content, Data.GROUP_ICON_DIR, file_name, 'wb')
     return file_name
 
 def get_msg_img(msg_id):
@@ -33,7 +35,7 @@ def get_msg_img(msg_id):
     result = Data.session.get(url)
 
     file_name = 'img_' + msg_id + '.jpg'
-    write_file(result.content, os.path.join(Data.IMG_DIR, file_name), 'wb')
+    write_file(result.content, Data.IMG_DIR, file_name, 'wb')
     return file_name
 
 def get_voice(msg_id):
@@ -41,7 +43,7 @@ def get_voice(msg_id):
     result = Data.session.get(url)
 
     file_name = 'voice_' + msg_id + '.mp3'
-    write_file(result.content, os.path.join(Data.VOI_DIR, file_name), 'wb')
+    write_file(result.content, Data.VOI_DIR, file_name, 'wb')
     return file_name
 
 def get_video(msg_id):
@@ -50,5 +52,5 @@ def get_video(msg_id):
     result = Data.session.get(url, headers = headers)
 
     file_name = 'video_' + msg_id + '.mp4'
-    write_file(result.content, os.path.join(Data.VID_DIR, file_name), 'wb')
+    write_file(result.content, Data.VID_DIR, file_name, 'wb')
     return file_name

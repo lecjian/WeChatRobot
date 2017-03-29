@@ -49,6 +49,12 @@ public_list = []
 group_members = {}
 encry_chat_room_id_list = {}
 
+#robot
+tuling_api = ''
+tuling_key = ''
+robot_switch = False
+first_chat = True
+
 #network request uir and host 
 session = session = requests.Session()
 url_get_uuid = 'https://login.weixin.qq.com/jslogin'

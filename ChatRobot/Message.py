@@ -6,6 +6,7 @@ import json
 import random
 import Data
 import Tools
+import Robot
 
 class Message:
     def __init__(self, contactsClass):
@@ -23,7 +24,7 @@ class Message:
                     # print '[INFO] Have new message'
                 elif code == '10101':
                     print '[INFO] Loginout on other client'
-                time.sleep(10)
+                time.sleep(5)
             except:
                 print '[ERROR] Except in proc_msg'
 
@@ -65,7 +66,7 @@ class Message:
                                               for keyVal in Data.sync_key['List']])
             
             if Data.DEBUG:
-                Tools.write_file(json.dumps(dic), os.path.join(Data.TEMP_DIR, 'msg_dic.json'), 'w' )
+                Tools.write_file(json.dumps(dic),Data.TEMP_DIR, 'msg_dic.json', 'w' )
             return dic
         except:
             return None
@@ -96,8 +97,11 @@ class Message:
                     index = msg_content.find(':')
                     msg_content = msg_content[:index]
                 print 'From-> %s : %s'%(name, msg_content)
-                #test send message
-                self.send_msg(name, msg_content)
+                #robot auto send message
+                content = Robot.auto_switch(user_name, msg_content)
+                if content is None:
+                    return
+                self.send_msg_by_uid(user_name, content)
 
             elif msg_type == 3:
                 image = Tools.get_msg_img(msg_id)
@@ -138,9 +142,13 @@ class Message:
         print '-link: %s' % msg['Url']
         print '-content: %s' % (msg.get('content')[:20] if msg.get('content') else "unknown")
 
-    def send_msg(self, name, word):
+    def send_msg_by_name(self, name, word):
         uid = self.contacts.get_user_id(name)
+        self.send_msg_by_uid(uid, word)
+
+    def send_msg_by_uid(self, uid, word):
         if uid is not None:
+            name = self.contacts.get_name(uid)
             url = Data.url_base + '/webwxsendmsg?pass_ticket=%s' % Data.pass_ticket
             msg_id = str(int(time.time() * 1000)) + str(random.random())[:5].replace('.', '')
             params = {
@@ -158,7 +166,7 @@ class Message:
             data = json.dumps(params, ensure_ascii=False).encode('utf8')
             try:
                 result = Data.session.post(url, data=data, headers=headers)
-            except (ConnectionError, ReadTimeout):
+            except:
                 return False
             dic = result.json()
             
@@ -170,6 +178,8 @@ class Message:
         else:
             print '[ERROR] user does not exist'    
             return False
+    
+        
 
        
 

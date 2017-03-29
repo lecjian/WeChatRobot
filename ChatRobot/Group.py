@@ -26,7 +26,7 @@ class Group:
             Data.encry_chat_room_id_list[group_id] = chat_room
 
         if Data.DEBUG:
-            Tools.write_file(json.dumps(Data.group_members), os.path.join(Data.TEMP_DIR, 'group_members.json'), 'wb')
+            Tools.write_file(json.dumps(Data.group_members), Data.TEMP_DIR, 'group_members.json', 'wb')
 
     def get_uid_by_name(self, group_name):
         for group in Data.group_list:
@@ -68,7 +68,7 @@ class Group:
         data = json.dumps(params, ensure_ascii = False).encode('utf8')
         try:
             result = Data.session.post(url, data = data, headers = headers)
-        except (ConnectionError, ReadTimeout):
+        except:
             return False
         dic = result.json()
         return dic['BaseResponse']['Ret'] == 0
@@ -91,7 +91,7 @@ class Group:
         data = json.dumps(params, ensure_ascii = False).encode('utf8')
         try:
             result = Data.session.post(url, data = data, headers = headers)
-        except (ConnectionError, ReadTimeout):
+        except:
             return False
         dic = result.json()
         return dic['BaseResponse']['Ret'] == 0
@@ -113,7 +113,7 @@ class Group:
         data = json.dumps(params, ensure_ascii = False).encode('utf8')
         try:
             result = Data.session.post(url, data = data, headers = headers)
-        except (ConnectionError, ReadTimeout):
+        except:
             return False
         dic = result.json()
         return dic['BaseResponse']['Ret'] == 0
@@ -129,7 +129,7 @@ class Group:
         data = json.dumps(params, ensure_ascii = False).encode('utf8')
         try:
             result = Data.session.post(url, data = data, headers = headers)
-        except (ConnectionError, ReadTimeout):
+        except:
             return False
         dic = result.json()
         return dic['BaseResponse']['Ret'] == 0
