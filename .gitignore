@@ -67,6 +67,7 @@ target/
 
 qr.png
 WXQR.jpg
+/ChatRobot/Data
 /*.jpg
 *.ini
 *.un~

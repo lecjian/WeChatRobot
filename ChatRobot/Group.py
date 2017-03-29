@@ -21,8 +21,9 @@ class Group:
         for group in dic['ContactList']:
             group_id = group['UserName']
             members = group['MemberList']
+            chat_room = group['EncryChatRoomId']
             Data.group_members[group_id] = members
-            Data.encry_chat_room_id_list[group_id] = group['EncryChatRoomId']
+            Data.encry_chat_room_id_list[group_id] = chat_room
 
         if Data.DEBUG:
             Tools.write_file(json.dumps(Data.group_members), os.path.join(Data.TEMP_DIR, 'group_members.json'), 'wb')

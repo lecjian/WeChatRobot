@@ -86,6 +86,7 @@ class Message:
         '''
         for msg in dic['AddMsgList']:
             msg_type = msg['MsgType']
+            msg_id = msg['MsgId']
 
             if msg_type == 1:
                 msg_content = msg['Content']
@@ -99,16 +100,19 @@ class Message:
                 self.send_msg(name, msg_content)
 
             elif msg_type == 3:
-                print 'receive image'
+                image = Tools.get_msg_img(msg_id)
+                print 'receive image %s'%image
 
             elif msg_type == 34:
-                print 'receive voice msg'
+                voice = Tools.get_voice(msg_id)
+                print 'receive voice %s'%voice
 
             elif msg_type == 42:
                 self.show_recommend(msg)
 
             elif msg_type == 43:
-                print 'video msg'
+                video = Tools.get_video(msg_id)
+                print 'receive video%s'%video
 
             elif msg_type == 47:
                 print 'emoji pic'

@@ -45,7 +45,7 @@ def get_voice(msg_id):
     return file_name
 
 def get_video(msg_id):
-    url = self.base_uri + '/webwxgetvideo?msgid=%s&skey=%s' % (msg_id, Data.skey)
+    url = Data.url_base + '/webwxgetvideo?msgid=%s&skey=%s' % (msg_id, Data.skey)
     headers = {'Range': 'bytes=0-'}
     result = Data.session.get(url, headers = headers)
 
