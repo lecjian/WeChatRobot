@@ -3,6 +3,7 @@ import re
 import time
 import os
 import json
+import random
 import Data
 import Tools
 
@@ -93,7 +94,9 @@ class Message:
                 if msg_content.find('=location') != -1:
                     index = msg_content.find(':')
                     msg_content = msg_content[:index]
-                print '%s : %s'%(name, msg_content)
+                print 'From-> %s : %s'%(name, msg_content)
+                #test send message
+                self.send_msg(name, msg_content)
 
             elif msg_type == 3:
                 print 'receive image'
@@ -131,7 +134,40 @@ class Message:
         print '-link: %s' % msg['Url']
         print '-content: %s' % (msg.get('content')[:20] if msg.get('content') else "unknown")
 
+    def send_msg(self, name, word):
+        uid = self.contacts.get_user_id(name)
+        if uid is not None:
+            url = Data.url_base + '/webwxsendmsg?pass_ticket=%s' % Data.pass_ticket
+            msg_id = str(int(time.time() * 1000)) + str(random.random())[:5].replace('.', '')
+            params = {
+                'BaseRequest': Data.base_request,
+                'Msg': {
+                    "Type": 1,
+                    "Content": word,
+                    "FromUserName": Data.my_account['UserName'],
+                    "ToUserName": uid,
+                    "LocalID": msg_id,
+                    "ClientMsgId": msg_id
+                }
+            }
+            headers = {'content-type': 'application/json; charset=UTF-8'}
+            data = json.dumps(params, ensure_ascii=False).encode('utf8')
+            try:
+                result = Data.session.post(url, data=data, headers=headers)
+            except (ConnectionError, ReadTimeout):
+                return False
+            dic = result.json()
+            
+            if dic['BaseResponse']['Ret'] == 0:
+                print 'To-> %s : %s'%(name, word)
+                return True
+            print '[ERROR] can\'t send message to %s'%name  
+            return False
+        else:
+            print '[ERROR] user does not exist'    
+            return False
 
+       
 
 
 

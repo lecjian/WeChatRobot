@@ -72,4 +72,20 @@ class Contacts:
             return self.get_contact_name(user_name, Data.public_list)
         return 'unknow'
 
+    def get_user_id(self, name):
+        if name == '':
+            return None
+        for contact in Data.friend_list:
+            if 'RemarkName' in contact and contact['RemarkName'] == name:
+                return contact['UserName']
+            if 'NickName' in contact and contact['NickName'] == name:
+                return contact['UserName']
+        for group in Data.group_list:
+            if 'RemarkName' in group and group['RemarkName'] == name:
+                return group['UserName']
+            if 'NickName' in group and group['NickName'] == name:
+                return group['UserName']
+        return None
+
+
     
