@@ -6,7 +6,6 @@ import Tools
 
 class Group:
     def __init__(self):
-        self.group_members = {}
         self.get_groups_members()
     
     def get_groups_members(self):
@@ -20,11 +19,13 @@ class Group:
         result.encoding = Data.encoding
         dic = json.loads(result.text)
         for group in dic['ContactList']:
-            gid = group['UserName']
+            group_id = group['UserName']
             members = group['MemberList']
-            self.group_members[gid] = members
+            Data.group_members[group_id] = members
+            Data.encry_chat_room_id_list[group_id] = group['EncryChatRoomId']
+
         if Data.DEBUG:
-            Tools.write_file(json.dumps(self.group_members), os.path.join(Data.TEMP_DIR, 'group_members.json'), 'wb')
+            Tools.write_file(json.dumps(Data.group_members), os.path.join(Data.TEMP_DIR, 'group_members.json'), 'wb')
 
     def get_uid_by_name(self, group_name):
         for group in Data.group_list:
@@ -43,11 +44,11 @@ class Group:
         group_id = self.get_uid_by_name(group_name)
         if group_id is None: return False
 
-        for group_user in self.group_members[group_id]:
+        for group_user in Data.group_members[group_id]:
             if group_user['UserName'] == uid:
                 return True #user in group
 
-        group_num = len(self.group_members[group_id])
+        group_num = len(Data.group_members[group_id])
         if group_num <= 100:
             url = Data.url_base + '/webwxupdatechatroom?fun=addmember&pass_ticket=%s' % Data.pass_ticket
             params ={
@@ -75,7 +76,7 @@ class Group:
         group_id = self.get_uid_by_name(group_name)
         if group_id is None: return False
 
-        for group_user in self.group_members[group_id]:
+        for group_user in Data.group_members[group_id]:
             if group_user['UserName'] == uid:
                 return True #user in group
 
@@ -96,7 +97,7 @@ class Group:
 
     def delete_user_from_group(self, user_name, group_id):
         user_id = None
-        for user in self.group_members[group_id]:
+        for user in Data.group_members[group_id]:
             if user['NickName'] == user_name:
                 user_id = user['UserName']
         if user_id == None:

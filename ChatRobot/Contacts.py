@@ -87,5 +87,20 @@ class Contacts:
                 return group['UserName']
         return None
 
+    def set_remarkname(self, user_id, remarkname):
+        url = Data + '/webwxoplog?lang=zh_CN&pass_ticket=%s'%Data.pass_ticket
+        params = {
+            'BaseRequest': Data.base_request,
+            'CmdId': 2,
+            'RemarkName': remarkname,
+            'UserName': uid
+        }
+        try:
+            result = Data.session.post(url, data = json.dumps(params), timeout = 60)
+            result.encoding = Data.encoding
+            dic = json.loads(result.text)
+            return dic['BaseResponse']['ErrMsg']
+        except:
+            return None
 
     

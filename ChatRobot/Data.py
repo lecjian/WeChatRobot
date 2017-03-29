@@ -22,8 +22,12 @@ PROJ_DIR =os.path.join(os.getcwd(),'ChatRobot')
 DATA_DIR = os.path.join(PROJ_DIR,'Data')
 TEMP_DIR = os.path.join(PROJ_DIR,'Temp')
 IMG_DIR = os.path.join(DATA_DIR,'Image')
+VOI_DIR = os.path.join(DATA_DIR,'Voice')
 VID_DIR = os.path.join(DATA_DIR,'Video')
 LOG_DIR = os.path.join(DATA_DIR,'Log')
+USER_ICON_DIR = os.path.join(DATA_DIR, 'UserHeadIcon')
+GROUP_USER_ICON_DIR = os.path.join(DATA_DIR, 'GroupUserHeadIcon')
+GROUP_ICON_DIR = os.path.join(DATA_DIR, 'GroupHeadIcon')
 
 
 # Login and request data
@@ -43,6 +47,8 @@ sync_key_str = None
 friend_list = [] 
 group_list = []
 public_list = []
+group_members = {}
+encry_chat_room_id_list = []
 
 #network request uir and host 
 session = session = requests.Session()
