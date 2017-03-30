@@ -91,17 +91,32 @@ class Message:
 
             if msg_type == 1:
                 msg_content = msg['Content']
-                user_name = msg['FromUserName']
-                name = self.contacts.get_name(user_name)
+                from_user_name = msg['FromUserName']
+                to_user_name = msg['ToUserName']
+                name = self.contacts.get_name(from_user_name)
                 if msg_content.find('=location') != -1:
                     index = msg_content.find(':')
                     msg_content = msg_content[:index]
                 print 'From-> %s : %s'%(name, msg_content)
+
+                if from_user_name == Data.my_account['UserName']:
+                    Data.start_robot_user_list.remove(to_user_name)
+  
                 #robot auto send message
-                content = Robot.auto_switch(user_name, msg_content)
+                content = Robot.auto_switch(from_user_name, msg_content)
                 if content is None:
                     return
-                self.send_msg_by_uid(user_name, content)
+                
+                is_have = False
+                for user in Data.user_haved_chat_list:
+                    if user == from_user_name:
+                        is_have = True
+                
+                if is_have == False:
+                    Data.user_haved_chat_list.append(from_user_name)
+
+                self.send_msg_by_uid(from_user_name, content)
+
 
             elif msg_type == 3:
                 image = Tools.get_msg_img(msg_id)

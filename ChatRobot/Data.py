@@ -50,10 +50,11 @@ group_members = {}
 encry_chat_room_id_list = {}
 
 #robot
+LOAD_CONFIG = False
 tuling_api = ''
 tuling_key = ''
-robot_switch = False
-first_chat = True
+start_robot_user_list = []
+user_haved_chat_list = []
 
 #network request uir and host 
 session = session = requests.Session()
