@@ -51,10 +51,13 @@ encry_chat_room_id_list = {}
 
 #robot
 LOAD_CONFIG = False
+mode = 0
+RobotId = ''
 tuling_api = ''
 tuling_key = ''
 start_robot_user_list = []
 user_haved_chat_list = []
+temp_user_id = ''
 
 #network request uir and host 
 session = session = requests.Session()

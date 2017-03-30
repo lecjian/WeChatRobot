@@ -1,3 +1,4 @@
+#coding=utf8
 import urllib
 import re
 import time
@@ -15,18 +16,27 @@ class Message:
         
     def sync_msg(self):
         while True:
-            try:
-                code, selector = self.sync_check()
-                if code == '0':
-                    msg = self.get_msg()
-                    if msg is not None:
-                        self.analyze_msg(msg)
-                    # print '[INFO] Have new message'
-                elif code == '10101':
-                    print '[INFO] Loginout on other client'
-                time.sleep(5)
-            except:
-                print '[ERROR] Except in proc_msg'
+            code, selector = self.sync_check()
+            if code == '0':
+                msg = self.get_msg()
+                if msg is not None:
+                    self.analyze_msg(msg)
+                # print '[INFO] Have new message'
+            elif code == '10101':
+                print '[INFO] Loginout on other client'
+            time.sleep(1)
+            # try:
+            #     code, selector = self.sync_check()
+            #     if code == '0':
+            #         msg = self.get_msg()
+            #         if msg is not None:
+            #             self.analyze_msg(msg)
+            #         # print '[INFO] Have new message'
+            #     elif code == '10101':
+            #         print '[INFO] Loginout on other client'
+            #     time.sleep(5)
+            # except:
+            #     print '[ERROR] Except in proc_msg'
 
     def sync_check(self):
         params = {
@@ -100,22 +110,38 @@ class Message:
                 print 'From-> %s : %s'%(name, msg_content)
 
                 if from_user_name == Data.my_account['UserName']:
-                    Data.start_robot_user_list.remove(to_user_name)
-  
-                #robot auto send message
-                content = Robot.auto_switch(from_user_name, msg_content)
-                if content is None:
-                    return
-                
-                is_have = False
-                for user in Data.user_haved_chat_list:
-                    if user == from_user_name:
-                        is_have = True
-                
-                if is_have == False:
-                    Data.user_haved_chat_list.append(from_user_name)
+                    if to_user_name in Data.start_robot_user_list:
+                        content = u'主人已接管，机器人已关闭'
+                        self.send_msg_by_uid(to_user_name, content)
+                        Data.start_robot_user_list.remove(to_user_name)
+                else:
+                    #robot auto send message
+                    is_use_robot, content = Robot.auto_switch(from_user_name, msg_content)
+                    if is_use_robot is True:
+                        if Data.mode == 1:
+                            if from_user_name != Data.RobotId:
+                                Data.temp_user_id = from_user_name
+                                self.send_msg_by_uid(Data.RobotId, content)
+                                return
+                            else:
+                                from_user_name = Data.temp_user_id
+                                content = msg_content
+                        else:
+                            content = Robot.auto_reply(from_user_name, msg_content)
+                    else:
+                        if content is None:
+                            return
+                    
+                    is_have = False
+                    for user in Data.user_haved_chat_list:
+                        if user == from_user_name:
+                            is_have = True
+                    
+                    if is_have == False:
+                        Data.user_haved_chat_list.append(from_user_name)
 
-                self.send_msg_by_uid(from_user_name, content)
+                    self.send_msg_by_uid(from_user_name, content)
+                
 
 
             elif msg_type == 3:

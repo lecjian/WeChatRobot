@@ -46,31 +46,23 @@ def auto_switch(user_id, msg):
     stop_cmd = [u'退出', u'退下', u'走开', u'关闭', u'关掉', u'休息', u'滚开']
     start_cmd = [u'出来', u'启动', u'工作', u'开启',  u'机器人']
 
-    is_start = False
-    for user in Data.start_robot_user_list:
-        if user == user_id:
-            is_start = True
-
-    is_chated = False
-    for user in Data.user_haved_chat_list:
-        if user == user_id:
-            is_chated = True
+    is_start = True if user_id in Data.start_robot_user_list else False
+    is_chated = True if user_id in Data.user_haved_chat_list else False
 
     if is_start:
         for cmd in stop_cmd:
             if cmd == msg:
                 Data.start_robot_user_list.remove(user_id)
-                return u'机器人已关闭！'
-        content = auto_reply(user_id, msg)
-        return content
+                return False, u'机器人已关闭！'
+        return True, None
     else:
         if is_chated == False:
             Data.user_haved_chat_list.append(user_id)
-            return u'您好，主人现在有事不在\n可以留言或开启聊天模式。\n回复“出来”,“启动”,“机器人”开启\n回复“关闭”,“退下”,“休息”关闭\n机器人模式可以随时开启和关闭哦'
+            return False, u'您好，主人现在有事不在\n可以留言或开启聊天模式。\n回复“出来”,“启动”,“机器人”开启\n回复“关闭”,“退下”,“休息”关闭\n机器人模式可以随时开启和关闭哦'
         for cmd in start_cmd:
             if cmd == msg:
                 Data.start_robot_user_list.append(user_id)
-                return u'机器人已开启！和机器人聊天吧'
-    return None
+                return False, u'机器人已开启！和机器人聊天吧'
+    return False, None
                     
 

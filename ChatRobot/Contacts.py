@@ -31,11 +31,12 @@ class Contacts:
         dic = json.loads(data)
         contacts_info = dic['MemberList']
         for contact in contacts_info:
-            if contact['Sex'] != 0: #friends
-                Data.friend_list.append(contact)
-            elif contact['UserName'].find('@@') != -1: #group
-                Data.group_list.append(contact)
-            elif contact['VerifyFlag'] != 0: #public
+            if contact['VerifyFlag'] == 0: 
+                if contact['UserName'].find('@@') != -1: #group
+                    Data.group_list.append(contact)
+                else: #friends
+                    Data.friend_list.append(contact)
+            else:  #public
                 Data.public_list.append(contact)
 
     def is_friend(self, user_name):
